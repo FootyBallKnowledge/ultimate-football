@@ -1,1 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Ultimate Football - matches, leagues, players, teams, standings and football news."
+    >
+
+    <meta name="theme-color" content="#0F172A">
+
+    <title>Ultimate Football | The Beautiful Game</title>
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         HEADER / NAVIGATION
+    ========================================================== -->
+
+    <header class="site-header">
+
+        <div class="container nav-container">
+
+            <!-- Logo -->
+            <a href="#home" class="logo">
+                <span class="logo-ball">⚽</span>
+                <span>Ultimate <strong>Football</strong></span>
+            </a>
+
+            <!-- Mobile menu button -->
+            <button
+                class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
+
+            <!-- Navigation -->
+            <nav class="main-nav" id="mainNav">
+
+                <a href="#home" class="nav-link active">Home</a>
+
+                <a href="#matches" class="nav-link">Matches</a>
+
+                <a href="#leagues" class="nav-link">Leagues</a>
+
+                <a href="#players" class="nav-link">Players</a>
+
+                <a href="#teams" class="nav-link">Teams</a>
+
+                <a href="#standings" class="nav-link">Standings</a>
+
+                <a href="#news" class="nav-link">News</a>
+
+                <a href="#search" class="nav-link">Search</a>
+
+            </nav>
+
+            <!-- Theme button -->
+            <button
+                class="theme-toggle"
+                id="themeToggle"
+                aria-label="Switch theme"
+                title="Switch between light and dark mode"
+            >
+                🌙
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================== -->
+
+    <main>
+
+        <!-- =====================================================
+             HOME / HERO
+        ====================================================== -->
+
+        <section id="home" class="hero-section">
+
+            <div class="container hero-grid">
+
+                <!-- Hero text -->
+
+                <div class="hero-content">
+
+                    <div class="hero-badge">
+                        ⚽ FOOTBALL • EVERYWHERE
+                    </div>
+
+                    <h1>
+                        The World of
+                        <span>Football</span>
+                        in One Place
+                    </h1>
+
+                    <p>
+                        Follow matches, leagues, players, teams,
+                        standings and football stories from around
+                        the world.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <a href="#matches" class="btn btn-primary">
+                            Explore Matches
+                        </a>
+
+                        <a href="#leagues" class="btn btn-secondary">
+                            Explore Leagues
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Featured match -->
+
+                <div class="featured-match-card">
+
+                    <div class="featured-top">
+
+                        <span class="live-badge">
+                            ● FEATURED
+                        </span>
+
+                        <span class="demo-label">
+                            Demo Data
+                        </span>
+
+                    </div>
+
+                    <div class="match-date">
+                        Match Centre
+                    </div>
+
+                    <div class="featured-teams">
+
+                        <div class="featured-team">
+
+                            <div class="big-team-logo">
+                                ARS
+                            </div>
+
+                            <h3>Arsenal</h3>
+
+                        </div>
+
+                        <div class="match-score">
+
+                            <span>VS</span>
+
+                            <small>20:00</small>
+
+                        </div>
+
+                        <div class="featured-team">
+
+                            <div class="big-team-logo">
+                                CHE
+                            </div>
+
+                            <h3>Chelsea</h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="match-competition">
+                        🏆 Premier League
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DATA STATUS
+        ====================================================== -->
+
+        <section class="status-section">
+
+            <div class="container">
+
+                <div class="data-status">
+
+                    <span class="status-dot"></span>
+
+                    <span>
+                        Football data:
+                        <strong>Demo Mode</strong>
+                    </span>
+
+                    <span class="status-note">
+                        Live API integration can be added later.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MATCHES
+        ====================================================== -->
+
+        <section id="matches" class="content-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            MATCH CENTRE
+                        </span>
+
+                        <h2>Football Matches</h2>
+
+                        <p>
+                            Follow live matches, upcoming fixtures
+                            and recent results.
+                        </p>
+
+                    </div>
+
+                    <a href="#matches" class="view-all">
+                        View All →
+                    </a>
+
+                </div>
+
+
+                <!-- Match filters -->
+
+                <div class="filter-buttons">
+
+                    <button
+                        class="filter-btn active"
+                        data-match-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-match-filter="live"
+                    >
+                        🔴 Live
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-match-filter="upcoming"
+                    >
+                        Upcoming
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-match-filter="result"
+                    >
+                        Results
+                    </button>
+
+                </div>
+
+
+                <!-- Matches will be inserted by app.js -->
+
+                <div
+                    class="matches-grid"
+                    id="matchesContainer"
+                >
+
+                    <div class="loading-card">
+                        Loading matches...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             LEAGUES
+        ====================================================== -->
+
+        <section id="leagues" class="content-section alt-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            COMPETITIONS
+                        </span>
+
+                        <h2>Top Football Leagues</h2>
+
+                        <p>
+                            Explore the world's most followed
+                            football competitions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="leagues-grid" id="leaguesContainer">
+
+                    <!-- Premier League -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🏆
+                        </div>
+
+                        <div>
+
+                            <h3>Premier League</h3>
+
+                            <p>England</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- La Liga -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🇪🇸
+                        </div>
+
+                        <div>
+
+                            <h3>La Liga</h3>
+
+                            <p>Spain</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- Bundesliga -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🇩🇪
+                        </div>
+
+                        <div>
+
+                            <h3>Bundesliga</h3>
+
+                            <p>Germany</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- Serie A -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🇮🇹
+                        </div>
+
+                        <div>
+
+                            <h3>Serie A</h3>
+
+                            <p>Italy</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- Ligue 1 -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🇫🇷
+                        </div>
+
+                        <div>
+
+                            <h3>Ligue 1</h3>
+
+                            <p>France</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- Champions League -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            ⭐
+                        </div>
+
+                        <div>
+
+                            <h3>Champions League</h3>
+
+                            <p>Europe</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+
+                    <!-- Europa League -->
+
+                    <article class="league-card">
+
+                        <div class="league-icon">
+                            🟠
+                        </div>
+
+                        <div>
+
+                            <h3>Europa League</h3>
+
+                            <p>Europe</p>
+
+                        </div>
+
+                        <span class="league-arrow">→</span>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PLAYERS
+        ====================================================== -->
+
+        <section id="players" class="content-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            PLAYER HUB
+                        </span>
+
+                        <h2>Trending Players</h2>
+
+                        <p>
+                            Explore player profiles and football
+                            statistics.
+                        </p>
+
+                    </div>
+
+                    <a href="#search" class="view-all">
+                        Search Players →
+                    </a>
+
+                </div>
+
+
+                <div
+                    class="players-grid"
+                    id="playersContainer"
+                >
+
+                    <!-- Player cards will be rendered by app.js -->
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TEAMS
+        ====================================================== -->
+
+        <section id="teams" class="content-section alt-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            CLUBS
+                        </span>
+
+                        <h2>Featured Teams</h2>
+
+                        <p>
+                            Discover clubs, squads and recent form.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="teams-grid"
+                    id="teamsContainer"
+                >
+
+                    <!-- Team cards will be rendered by app.js -->
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             STANDINGS
+        ====================================================== -->
+
+        <section id="standings" class="content-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            TABLES
+                        </span>
+
+                        <h2>League Standings</h2>
+
+                        <p>
+                            Track team positions, points and
+                            competition rankings.
+                        </p>
+
+                    </div>
+
+                    <span class="demo-label large">
+                        Demo Standings
+                    </span>
+
+                </div>
+
+
+                <div class="standings-layout">
+
+                    <!-- League table -->
+
+                    <div class="standings-card">
+
+                        <div class="table-header">
+
+                            <h3>Premier League</h3>
+
+                            <span>2026/27</span>
+
+                        </div>
+
+
+                        <div class="table-scroll">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>#</th>
+
+                                        <th>Team</th>
+
+                                        <th>P</th>
+
+                                        <th>W</th>
+
+                                        <th>D</th>
+
+                                        <th>L</th>
+
+                                        <th>Pts</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="standingsTable">
+
+                                    <!-- Filled by app.js -->
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Top scorers -->
+
+                    <div class="scorers-card">
+
+                        <div class="table-header">
+
+                            <h3>Top Scorers</h3>
+
+                            <span>Demo</span>
+
+                        </div>
+
+
+                        <div
+                            class="scorers-list"
+                            id="scorersContainer"
+                        >
+
+                            <!-- Filled by app.js -->
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             NEWS
+        ====================================================== -->
+
+        <section id="news" class="content-section alt-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            FOOTBALL STORIES
+                        </span>
+
+                        <h2>Latest Football News</h2>
+
+                        <p>
+                            Football stories, analysis and updates.
+                        </p>
+
+                    </div>
+
+                    <span class="demo-label">
+                        Demo News
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="news-grid"
+                    id="newsContainer"
+                >
+
+                    <!-- News cards will be rendered by app.js -->
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SEARCH
+        ====================================================== -->
+
+        <section id="search" class="content-section search-section">
+
+            <div class="container">
+
+                <div class="search-box-wrapper">
+
+                    <div class="search-heading">
+
+                        <span class="section-kicker">
+                            DISCOVER
+                        </span>
+
+                        <h2>Search Football</h2>
+
+                        <p>
+                            Search players, teams and leagues.
+                        </p>
+
+                    </div>
+
+
+                    <div class="search-input-wrapper">
+
+                        <span class="search-icon">
+                            🔎
+                        </span>
+
+                        <input
+                            type="search"
+                            id="searchInput"
+                            placeholder="Search Mbappé, Arsenal, Premier League..."
+                            autocomplete="off"
+                            aria-label="Search football"
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="search-results"
+                        id="searchResults"
+                    >
+
+                        <div class="search-empty">
+
+                            <span>⚽</span>
+
+                            <p>
+                                Start typing to search football
+                                information.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <!-- Footer brand -->
+
+                <div class="footer-brand">
+
+                    <a href="#home" class="logo">
+
+                        <span class="logo-ball">⚽</span>
+
+                        <span>
+                            Ultimate <strong>Football</strong>
+                        </span>
+
+                    </a>
+
+                    <p>
+                        Your football destination for matches,
+                        leagues, players, teams and more.
+                    </p>
+
+                </div>
+
+
+                <!-- Quick links -->
+
+                <div class="footer-column">
+
+                    <h3>Explore</h3>
+
+                    <a href="#matches">Matches</a>
+
+                    <a href="#leagues">Leagues</a>
+
+                    <a href="#players">Players</a>
+
+                    <a href="#teams">Teams</a>
+
+                </div>
+
+
+                <!-- More links -->
+
+                <div class="footer-column">
+
+                    <h3>Information</h3>
+
+                    <a href="#standings">Standings</a>
+
+                    <a href="#news">News</a>
+
+                    <a href="#search">Search</a>
+
+                    <a href="#home">Home</a>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="footer-column">
+
+                    <h3>Ultimate Football</h3>
+
+                    <p class="footer-status">
+                        <span class="status-dot"></span>
+                        Website Online
+                    </p>
+
+                    <p class="footer-small">
+                        Demo data is currently being used.
+                        Live football APIs can be connected
+                        in a later version.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © <span id="currentYear"></span>
+                    Ultimate Football. All rights reserved.
+                </p>
+
+                <p>
+                    Made for football fans ⚽
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
