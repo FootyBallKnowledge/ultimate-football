@@ -27,7 +27,7 @@ jobs:
 
           key = os.environ["API_FOOTBALL_KEY"]
 
-          url = "https://v3.football.api-sports.io/fixtures?next=20"
+          from datetime import datetime, timezone  today = datetime.now(timezone.utc).strftime("%Y-%m-%d") url = f"https://v3.football.api-sports.io/fixtures?date={today}"
 
           request = urllib.request.Request(
               url,
