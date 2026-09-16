@@ -1,408 +1,165 @@
-"use strict";
-
 /* =========================================================
    ULTIMATE FOOTBALL
-   Demo Data Version
-   No API key required
+   API-Football Data Integration
    ========================================================= */
 
-const DEMO_MODE = true;
+const DATA_URL = "football-data.json";
 
+let footballMatches = [];
+let currentMatchFilter = "all";
 
 /* =========================================================
-   DEMO MATCHES
+   DEMO DATA FOR OTHER SECTIONS
+   These will be replaced with live API data in later steps.
    ========================================================= */
 
-const matches = [
-    {
-        status: "live",
-        league: "Premier League",
-        home: "Arsenal",
-        away: "Chelsea",
-        homeCode: "ARS",
-        awayCode: "CHE",
-        homeScore: 2,
-        awayScore: 1,
-        time: "67'",
-        date: "Today"
-    },
-    {
-        status: "upcoming",
-        league: "La Liga",
-        home: "Real Madrid",
-        away: "Barcelona",
-        homeCode: "RMA",
-        awayCode: "BAR",
-        homeScore: null,
-        awayScore: null,
-        time: "20:00",
-        date: "Today"
-    },
-    {
-        status: "upcoming",
-        league: "Bundesliga",
-        home: "Bayern Munich",
-        away: "Borussia Dortmund",
-        homeCode: "BAY",
-        awayCode: "BVB",
-        homeScore: null,
-        awayScore: null,
-        time: "18:30",
-        date: "Tomorrow"
-    },
-    {
-        status: "result",
-        league: "Serie A",
-        home: "Inter Milan",
-        away: "AC Milan",
-        homeCode: "INT",
-        awayCode: "MIL",
-        homeScore: 2,
-        awayScore: 0,
-        time: "FT",
-        date: "Yesterday"
-    },
-    {
-        status: "result",
-        league: "Ligue 1",
-        home: "Paris Saint-Germain",
-        away: "Marseille",
-        homeCode: "PSG",
-        awayCode: "OM",
-        homeScore: 3,
-        awayScore: 1,
-        time: "FT",
-        date: "Yesterday"
-    },
-    {
-        status: "live",
-        league: "Champions League",
-        home: "Manchester City",
-        away: "Inter Milan",
-        homeCode: "MCI",
-        awayCode: "INT",
-        homeScore: 1,
-        awayScore: 1,
-        time: "54'",
-        date: "Today"
-    },
-    {
-        status: "upcoming",
-        league: "Europa League",
-        home: "Liverpool",
-        away: "Roma",
-        homeCode: "LIV",
-        awayCode: "ROM",
-        homeScore: null,
-        awayScore: null,
-        time: "21:00",
-        date: "Tomorrow"
-    },
-    {
-        status: "result",
-        league: "Premier League",
-        home: "Manchester United",
-        away: "Tottenham",
-        homeCode: "MUN",
-        awayCode: "TOT",
-        homeScore: 2,
-        awayScore: 2,
-        time: "FT",
-        date: "Yesterday"
-    }
-];
-
-
-/* =========================================================
-   PLAYERS
-   ========================================================= */
-
-const players = [
+const demoPlayers = [
     {
         name: "Kylian Mbappé",
-        club: "Real Madrid",
         position: "Forward",
-        goals: 28,
-        assists: 9,
-        appearances: 32,
-        emoji: "⚡"
+        team: "Real Madrid",
+        nationality: "France",
+        goals: 24,
+        assists: 8,
+        appearances: 30
     },
     {
         name: "Erling Haaland",
-        club: "Manchester City",
         position: "Forward",
-        goals: 31,
+        team: "Manchester City",
+        nationality: "Norway",
+        goals: 28,
         assists: 6,
-        appearances: 30,
-        emoji: "🎯"
+        appearances: 31
     },
     {
         name: "Mohamed Salah",
-        club: "Liverpool",
         position: "Forward",
-        goals: 24,
-        assists: 12,
-        appearances: 33,
-        emoji: "🔥"
+        team: "Liverpool",
+        nationality: "Egypt",
+        goals: 22,
+        assists: 11,
+        appearances: 29
     },
     {
         name: "Jude Bellingham",
-        club: "Real Madrid",
         position: "Midfielder",
+        team: "Real Madrid",
+        nationality: "England",
         goals: 15,
-        assists: 10,
-        appearances: 31,
-        emoji: "⭐"
+        assists: 9,
+        appearances: 28
     },
     {
         name: "Vinícius Júnior",
-        club: "Real Madrid",
         position: "Forward",
-        goals: 21,
-        assists: 13,
-        appearances: 29,
-        emoji: "⚽"
+        team: "Real Madrid",
+        nationality: "Brazil",
+        goals: 19,
+        assists: 12,
+        appearances: 27
     },
     {
         name: "Harry Kane",
-        club: "Bayern Munich",
         position: "Forward",
-        goals: 27,
+        team: "Bayern Munich",
+        nationality: "England",
+        goals: 26,
         assists: 7,
-        appearances: 30,
-        emoji: "🏹"
+        appearances: 30
     }
 ];
 
-
-/* =========================================================
-   TEAMS
-   ========================================================= */
-
-const teams = [
+const demoTeams = [
     {
         name: "Arsenal",
+        country: "England",
         league: "Premier League",
-        code: "ARS",
-        stadium: "Emirates Stadium",
-        manager: "Mikel Arteta",
-        squad: ["Bukayo Saka", "Martin Ødegaard", "Declan Rice"],
-        form: ["w", "w", "d", "w", "w"]
+        form: ["W", "W", "D", "W", "W"]
     },
     {
         name: "Real Madrid",
+        country: "Spain",
         league: "La Liga",
-        code: "RMA",
-        stadium: "Santiago Bernabéu",
-        manager: "Xabi Alonso",
-        squad: ["Kylian Mbappé", "Jude Bellingham", "Vinícius Júnior"],
-        form: ["w", "w", "w", "d", "w"]
+        form: ["W", "W", "W", "D", "W"]
     },
     {
         name: "Bayern Munich",
+        country: "Germany",
         league: "Bundesliga",
-        code: "BAY",
-        stadium: "Allianz Arena",
-        manager: "Vincent Kompany",
-        squad: ["Harry Kane", "Jamal Musiala", "Joshua Kimmich"],
-        form: ["w", "d", "w", "w", "w"]
+        form: ["W", "L", "W", "W", "W"]
     },
     {
         name: "Manchester City",
+        country: "England",
         league: "Premier League",
-        code: "MCI",
-        stadium: "Etihad Stadium",
-        manager: "Pep Guardiola",
-        squad: ["Erling Haaland", "Phil Foden", "Rodri"],
-        form: ["d", "w", "w", "d", "w"]
+        form: ["W", "D", "W", "W", "L"]
     },
     {
         name: "Barcelona",
+        country: "Spain",
         league: "La Liga",
-        code: "BAR",
-        stadium: "Camp Nou",
-        manager: "Hansi Flick",
-        squad: ["Lamine Yamal", "Pedri", "Robert Lewandowski"],
-        form: ["w", "w", "w", "w", "d"]
+        form: ["W", "W", "D", "W", "W"]
     },
     {
         name: "Liverpool",
+        country: "England",
         league: "Premier League",
-        code: "LIV",
-        stadium: "Anfield",
-        manager: "Arne Slot",
-        squad: ["Mohamed Salah", "Virgil van Dijk", "Luis Díaz"],
-        form: ["w", "w", "d", "w", "w"]
+        form: ["W", "W", "W", "D", "W"]
     }
 ];
 
+const demoStandings = [
+    ["Arsenal", 30, 22, 5, 3, 71, 25, 71],
+    ["Liverpool", 30, 21, 6, 3, 68, 28, 69],
+    ["Manchester City", 30, 20, 7, 3, 65, 29, 67],
+    ["Chelsea", 30, 17, 6, 7, 54, 35, 57],
+    ["Manchester United", 30, 15, 7, 8, 50, 39, 52],
+    ["Newcastle United", 30, 14, 8, 8, 48, 38, 50]
+];
 
-/* =========================================================
-   STANDINGS
-   ========================================================= */
+const demoScorers = [
+    ["Erling Haaland", "Manchester City", 28],
+    ["Harry Kane", "Bayern Munich", 26],
+    ["Kylian Mbappé", "Real Madrid", 24],
+    ["Mohamed Salah", "Liverpool", 22],
+    ["Vinícius Júnior", "Real Madrid", 19]
+];
 
-const standings = [
+const demoNews = [
     {
-        position: 1,
-        team: "Arsenal",
-        code: "ARS",
-        played: 20,
-        wins: 15,
-        draws: 3,
-        losses: 2,
-        points: 48
+        title: "Ultimate Football is now connected to live football data",
+        category: "Football",
+        text: "The website is now prepared to display automatically updated football fixtures."
     },
     {
-        position: 2,
-        team: "Liverpool",
-        code: "LIV",
-        played: 20,
-        wins: 14,
-        draws: 4,
-        losses: 2,
-        points: 46
+        title: "European football enters another exciting stage",
+        category: "Leagues",
+        text: "Follow fixtures, results and competition information in one place."
     },
     {
-        position: 3,
-        team: "Manchester City",
-        code: "MCI",
-        played: 20,
-        wins: 13,
-        draws: 5,
-        losses: 2,
-        points: 44
+        title: "Player statistics remain at the heart of modern football",
+        category: "Players",
+        text: "Goals, assists and appearances help provide a broader picture of player performance."
     },
     {
-        position: 4,
-        team: "Chelsea",
-        code: "CHE",
-        played: 20,
-        wins: 12,
-        draws: 4,
-        losses: 4,
-        points: 40
-    },
-    {
-        position: 5,
-        team: "Manchester United",
-        code: "MUN",
-        played: 20,
-        wins: 10,
-        draws: 5,
-        losses: 5,
-        points: 35
-    },
-    {
-        position: 6,
-        team: "Tottenham",
-        code: "TOT",
-        played: 20,
-        wins: 9,
-        draws: 4,
-        losses: 7,
-        points: 31
+        title: "Follow your favourite clubs",
+        category: "Teams",
+        text: "Team information, recent form and squad details are coming to Ultimate Football."
     }
 ];
 
-
 /* =========================================================
-   TOP SCORERS
+   BASIC HELPERS
    ========================================================= */
 
-const scorers = [
-    {
-        name: "Erling Haaland",
-        club: "Manchester City",
-        goals: 31,
-        emoji: "🎯"
-    },
-    {
-        name: "Kylian Mbappé",
-        club: "Real Madrid",
-        goals: 28,
-        emoji: "⚡"
-    },
-    {
-        name: "Harry Kane",
-        club: "Bayern Munich",
-        goals: 27,
-        emoji: "🏹"
-    },
-    {
-        name: "Mohamed Salah",
-        club: "Liverpool",
-        goals: 24,
-        emoji: "🔥"
-    },
-    {
-        name: "Vinícius Júnior",
-        club: "Real Madrid",
-        goals: 21,
-        emoji: "⚽"
-    }
-];
-
-
-/* =========================================================
-   NEWS
-   ========================================================= */
-
-const news = [
-    {
-        category: "MATCH CENTRE",
-        date: "Demo",
-        title: "Weekend Match Centre: Fixtures to Watch",
-        description:
-            "Explore upcoming fixtures, recent results and featured matches from Europe's major competitions.",
-        emoji: "📰"
-    },
-    {
-        category: "TACTICS",
-        date: "Demo",
-        title: "How Tactical Systems Shape Modern Football",
-        description:
-            "A look at how formations, pressing and possession influence the modern game.",
-        emoji: "📋"
-    },
-    {
-        category: "PLAYERS",
-        date: "Demo",
-        title: "The Rise of the Modern Attacking Player",
-        description:
-            "Speed, creativity and versatility are becoming increasingly important qualities.",
-        emoji: "⚡"
-    },
-    {
-        category: "LEAGUES",
-        date: "Demo",
-        title: "Europe's Major Football Leagues",
-        description:
-            "Follow the Premier League, La Liga, Bundesliga, Serie A and Ligue 1.",
-        emoji: "🌍"
-    }
-];
-
-
-/* =========================================================
-   LEAGUES
-   ========================================================= */
-
-const leagues = [
-    "Premier League",
-    "La Liga",
-    "Bundesliga",
-    "Serie A",
-    "Ligue 1",
-    "Champions League",
-    "Europa League"
-];
-
-
-/* =========================================================
-   SAFE HTML
-   ========================================================= */
+function el(id) {
+    return document.getElementById(id);
+}
 
 function safe(value) {
+    if (value === null || value === undefined) return "";
+
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -411,149 +168,481 @@ function safe(value) {
         .replace(/'/g, "&#039;");
 }
 
+function escapeImage(url) {
+    if (!url) return "";
 
-/* =========================================================
-   ELEMENT HELPER
-   ========================================================= */
+    try {
+        const parsed = new URL(url);
 
-function el(id) {
-    return document.getElementById(id);
+        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+            return "";
+        }
+
+        return safe(parsed.href);
+    } catch {
+        return "";
+    }
 }
 
+/* =========================================================
+   DATE / STATUS HELPERS
+   ========================================================= */
+
+function getMatchStatus(match) {
+    const status = match?.fixture?.status?.short || "";
+
+    const liveStatuses = [
+        "1H",
+        "HT",
+        "2H",
+        "ET",
+        "BT",
+        "P",
+        "LIVE"
+    ];
+
+    const finishedStatuses = [
+        "FT",
+        "AET",
+        "PEN"
+    ];
+
+    if (liveStatuses.includes(status)) {
+        return "live";
+    }
+
+    if (finishedStatuses.includes(status)) {
+        return "result";
+    }
+
+    return "upcoming";
+}
+
+function getStatusText(match) {
+    const status = match?.fixture?.status?.short || "";
+    const longStatus = match?.fixture?.status?.long || "";
+
+    if (["1H", "2H", "ET", "BT", "P"].includes(status)) {
+        const elapsed = match?.fixture?.status?.elapsed;
+
+        if (elapsed) {
+            return `${elapsed}' LIVE`;
+        }
+
+        return "LIVE";
+    }
+
+    if (status === "HT") {
+        return "HALF TIME";
+    }
+
+    if (["FT", "AET", "PEN"].includes(status)) {
+        return status === "FT" ? "FULL TIME" : longStatus || status;
+    }
+
+    return formatMatchDate(match?.fixture?.date);
+}
+
+function formatMatchDate(dateString) {
+    if (!dateString) return "Date TBC";
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+        return "Date TBC";
+    }
+
+    return date.toLocaleString([], {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
 
 /* =========================================================
-   MATCHES
+   LOAD FOOTBALL DATA
+   ========================================================= */
+
+async function loadFootballData() {
+    const statusBox = el("dataStatus");
+
+    try {
+        if (statusBox) {
+            statusBox.textContent = "Loading live football data...";
+        }
+
+        const response = await fetch(`${DATA_URL}?v=${Date.now()}`, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data.response)) {
+            footballMatches = data.response;
+        } else {
+            footballMatches = [];
+        }
+
+        renderMatches(currentMatchFilter);
+        renderFeaturedMatch();
+
+        if (statusBox) {
+            statusBox.textContent =
+                `Live football data loaded • ${footballMatches.length} matches`;
+        }
+
+        console.log(
+            "Ultimate Football: API data loaded",
+            footballMatches
+        );
+
+    } catch (error) {
+        console.error("Unable to load football data:", error);
+
+        footballMatches = [];
+
+        renderMatches(currentMatchFilter);
+
+        if (statusBox) {
+            statusBox.textContent =
+                "Football data temporarily unavailable";
+        }
+    }
+}
+
+/* =========================================================
+   MATCH FILTERING
+   ========================================================= */
+
+function filterMatches(matches, filter) {
+    if (!Array.isArray(matches)) return [];
+
+    if (filter === "live") {
+        return matches.filter(match => getMatchStatus(match) === "live");
+    }
+
+    if (filter === "upcoming") {
+        return matches.filter(match => getMatchStatus(match) === "upcoming");
+    }
+
+    if (filter === "result") {
+        return matches.filter(match => getMatchStatus(match) === "result");
+    }
+
+    return matches;
+}
+
+/* =========================================================
+   RENDER MATCHES
    ========================================================= */
 
 function renderMatches(filter = "all") {
-
     const container = el("matchesContainer");
 
     if (!container) return;
 
-    let data = matches;
+    currentMatchFilter = filter;
 
-    if (filter !== "all") {
-        data = matches.filter(
-            match => match.status === filter
-        );
-    }
+    const matches = filterMatches(footballMatches, filter);
 
-    if (!data.length) {
+    if (!matches.length) {
         container.innerHTML = `
             <div class="empty-state">
-                No matches available.
+                <h3>No matches found</h3>
+                <p>
+                    There are currently no matches in this category.
+                    Try another filter.
+                </p>
             </div>
         `;
+
         return;
     }
 
-    container.innerHTML = data.map(match => {
-
-        const score =
-            match.status === "upcoming"
-                ? match.time
-                : `${match.homeScore} - ${match.awayScore}`;
-
-        const statusText =
-            match.status === "live"
-                ? "LIVE"
-                : match.status === "result"
-                    ? "FT"
-                    : "UPCOMING";
-
-        return `
-            <article class="match-card">
-
-                <div class="match-card-top">
-
-                    <span class="match-league">
-                        ${safe(match.league)}
-                    </span>
-
-                    <span class="match-status ${safe(match.status)}">
-                        ${statusText}
-                    </span>
-
-                </div>
-
-                <div class="match-teams">
-
-                    <div class="team-side">
-
-                        <div class="team-code">
-                            ${safe(match.homeCode)}
-                        </div>
-
-                        <strong>
-                            ${safe(match.home)}
-                        </strong>
-
-                    </div>
-
-                    <div class="match-score">
-
-                        <strong>
-                            ${safe(score)}
-                        </strong>
-
-                    </div>
-
-                    <div class="team-side">
-
-                        <div class="team-code">
-                            ${safe(match.awayCode)}
-                        </div>
-
-                        <strong>
-                            ${safe(match.away)}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-                <div class="match-date">
-                    ${safe(match.date)}
-                </div>
-
-            </article>
-        `;
-
-    }).join("");
+    container.innerHTML = matches
+        .map((match) => createMatchCard(match))
+        .join("");
 }
 
+function createMatchCard(match) {
+    const fixture = match?.fixture || {};
+    const league = match?.league || {};
+    const teams = match?.teams || {};
+    const goals = match?.goals || {};
+
+    const home = teams.home || {};
+    const away = teams.away || {};
+
+    const statusType = getMatchStatus(match);
+    const statusText = getStatusText(match);
+
+    const homeGoals =
+        goals.home === null || goals.home === undefined
+            ? "-"
+            : goals.home;
+
+    const awayGoals =
+        goals.away === null || goals.away === undefined
+            ? "-"
+            : goals.away;
+
+    const homeLogo = escapeImage(home.logo);
+    const awayLogo = escapeImage(away.logo);
+    const leagueLogo = escapeImage(league.logo);
+
+    return `
+        <article class="match-card">
+
+            <div class="match-card-header">
+
+                <div class="match-league">
+
+                    ${
+                        leagueLogo
+                            ? `<img
+                                src="${leagueLogo}"
+                                alt="${safe(league.name || "League")}"
+                                loading="lazy"
+                               >`
+                            : ""
+                    }
+
+                    <span>${safe(league.name || "Football")}</span>
+
+                </div>
+
+                <span class="match-status ${statusType}">
+                    ${safe(statusText)}
+                </span>
+
+            </div>
+
+            <div class="match-teams">
+
+                <div class="team-side">
+
+                    ${
+                        homeLogo
+                            ? `<img
+                                src="${homeLogo}"
+                                alt="${safe(home.name || "Home team")}"
+                                class="team-logo"
+                                loading="lazy"
+                               >`
+                            : `<div class="team-logo-placeholder">⚽</div>`
+                    }
+
+                    <span>${safe(home.name || "Home Team")}</span>
+
+                </div>
+
+                <div class="match-score">
+
+                    <strong>
+                        ${safe(homeGoals)}
+                        <span>–</span>
+                        ${safe(awayGoals)}
+                    </strong>
+
+                    <small>
+                        ${safe(
+                            fixture.venue?.name ||
+                            "Football Stadium"
+                        )}
+                    </small>
+
+                </div>
+
+                <div class="team-side">
+
+                    ${
+                        awayLogo
+                            ? `<img
+                                src="${awayLogo}"
+                                alt="${safe(away.name || "Away team")}"
+                                class="team-logo"
+                                loading="lazy"
+                               >`
+                            : `<div class="team-logo-placeholder">⚽</div>`
+                    }
+
+                    <span>${safe(away.name || "Away Team")}</span>
+
+                </div>
+
+            </div>
+
+            <div class="match-card-footer">
+
+                <span>
+                    ${safe(
+                        fixture.date
+                            ? formatMatchDate(fixture.date)
+                            : "Date TBC"
+                    )}
+                </span>
+
+                <span>
+                    ${safe(league.country || "")}
+                </span>
+
+            </div>
+
+        </article>
+    `;
+}
+
+/* =========================================================
+   FEATURED MATCH
+   ========================================================= */
+
+function renderFeaturedMatch() {
+    const featured = el("featuredMatch");
+
+    if (!featured) return;
+
+    if (!footballMatches.length) {
+        return;
+    }
+
+    const liveMatches = footballMatches.filter(
+        match => getMatchStatus(match) === "live"
+    );
+
+    const upcomingMatches = footballMatches.filter(
+        match => getMatchStatus(match) === "upcoming"
+    );
+
+    const selected =
+        liveMatches[0] ||
+        upcomingMatches[0] ||
+        footballMatches[0];
+
+    if (!selected) return;
+
+    const fixture = selected.fixture || {};
+    const league = selected.league || {};
+    const teams = selected.teams || {};
+    const goals = selected.goals || {};
+
+    const home = teams.home || {};
+    const away = teams.away || {};
+
+    const homeLogo = escapeImage(home.logo);
+    const awayLogo = escapeImage(away.logo);
+
+    featured.innerHTML = `
+        <div class="featured-match-content">
+
+            <div class="featured-league">
+                ${safe(league.name || "Football")}
+            </div>
+
+            <div class="featured-teams">
+
+                <div>
+                    ${
+                        homeLogo
+                            ? `<img
+                                src="${homeLogo}"
+                                alt="${safe(home.name)}"
+                                loading="lazy"
+                               >`
+                            : "⚽"
+                    }
+
+                    <strong>${safe(home.name || "Home")}</strong>
+                </div>
+
+                <div class="featured-score">
+
+                    <strong>
+                        ${
+                            goals.home === null ||
+                            goals.home === undefined
+                                ? "-"
+                                : goals.home
+                        }
+
+                        <span>–</span>
+
+                        ${
+                            goals.away === null ||
+                            goals.away === undefined
+                                ? "-"
+                                : goals.away
+                        }
+                    </strong>
+
+                    <small>
+                        ${safe(getStatusText(selected))}
+                    </small>
+
+                </div>
+
+                <div>
+                    ${
+                        awayLogo
+                            ? `<img
+                                src="${awayLogo}"
+                                alt="${safe(away.name)}"
+                                loading="lazy"
+                               >`
+                            : "⚽"
+                    }
+
+                    <strong>${safe(away.name || "Away")}</strong>
+                </div>
+
+            </div>
+
+            <p>
+                ${safe(
+                    fixture.venue?.name ||
+                    formatMatchDate(fixture.date)
+                )}
+            </p>
+
+        </div>
+    `;
+}
 
 /* =========================================================
    PLAYERS
    ========================================================= */
 
 function renderPlayers() {
-
     const container = el("playersContainer");
 
     if (!container) return;
 
-    container.innerHTML = players.map(player => `
-        <article class="player-card">
+    container.innerHTML = demoPlayers
+        .map(player => `
+            <article class="player-card">
 
-            <div class="player-image">
-                ${safe(player.emoji)}
-            </div>
+                <div class="player-image">
+                    ⚽
+                </div>
 
-            <div class="player-info">
+                <div class="player-info">
 
-                <h3>
-                    ${safe(player.name)}
-                </h3>
+                    <h3>${safe(player.name)}</h3>
 
-                <p class="player-club">
-                    ${safe(player.club)}
-                </p>
+                    <p>
+                        ${safe(player.position)} •
+                        ${safe(player.team)}
+                    </p>
 
-                <span class="player-position">
-                    ${safe(player.position)}
-                </span>
+                    <small>
+                        ${safe(player.nationality)}
+                    </small>
+
+                </div>
 
                 <div class="player-stats">
 
@@ -574,647 +663,378 @@ function renderPlayers() {
 
                 </div>
 
-            </div>
-
-        </article>
-    `).join("");
+            </article>
+        `)
+        .join("");
 }
-
 
 /* =========================================================
    TEAMS
    ========================================================= */
 
 function renderTeams() {
-
     const container = el("teamsContainer");
 
     if (!container) return;
 
-    container.innerHTML = teams.map(team => {
-
-        const form = team.form.map(result => {
-
-            const letter =
-                result === "w"
-                    ? "W"
-                    : result === "d"
-                        ? "D"
-                        : "L";
-
-            return `
-                <span class="form-badge ${result}">
-                    ${letter}
-                </span>
-            `;
-
-        }).join("");
-
-        return `
+    container.innerHTML = demoTeams
+        .map(team => `
             <article class="team-card">
 
-                <div class="team-card-header">
-
-                    <div class="team-code large">
-                        ${safe(team.code)}
-                    </div>
-
-                    <div>
-                        <h3>
-                            ${safe(team.name)}
-                        </h3>
-
-                        <p>
-                            ${safe(team.league)}
-                        </p>
-                    </div>
-
+                <div class="team-card-icon">
+                    ⚽
                 </div>
 
-                <div class="team-details">
+                <h3>${safe(team.name)}</h3>
 
-                    <p>
-                        <strong>Stadium:</strong>
-                        ${safe(team.stadium)}
-                    </p>
+                <p>${safe(team.league)}</p>
 
-                    <p>
-                        <strong>Manager:</strong>
-                        ${safe(team.manager)}
-                    </p>
-
-                </div>
-
-                <div class="team-squad">
-
-                    <h4>Key Players</h4>
-
-                    <ul>
-                        ${team.squad.map(player => `
-                            <li>${safe(player)}</li>
-                        `).join("")}
-                    </ul>
-
-                </div>
+                <small>${safe(team.country)}</small>
 
                 <div class="team-form">
 
-                    <h4>Recent Form</h4>
-
-                    <div class="form-list">
-                        ${form}
-                    </div>
+                    ${team.form
+                        .map(result => `
+                            <span class="form-badge ${result.toLowerCase()}">
+                                ${safe(result)}
+                            </span>
+                        `)
+                        .join("")}
 
                 </div>
 
             </article>
-        `;
-
-    }).join("");
+        `)
+        .join("");
 }
-
 
 /* =========================================================
    STANDINGS
    ========================================================= */
 
 function renderStandings() {
+    const table = el("standingsTable");
 
-    const container = el("standingsTable");
+    if (!table) return;
 
-    if (!container) return;
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Team</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>Pts</th>
+            </tr>
+        </thead>
 
-    container.innerHTML = `
-        <div class="table-wrapper">
+        <tbody>
 
-            <table>
-
-                <thead>
+            ${demoStandings
+                .map((team, index) => `
                     <tr>
-                        <th>#</th>
-                        <th>Team</th>
-                        <th>P</th>
-                        <th>W</th>
-                        <th>D</th>
-                        <th>L</th>
-                        <th>Pts</th>
+
+                        <td>${index + 1}</td>
+
+                        <td>
+                            <strong>${safe(team[0])}</strong>
+                        </td>
+
+                        <td>${team[1]}</td>
+                        <td>${team[2]}</td>
+                        <td>${team[3]}</td>
+                        <td>${team[4]}</td>
+                        <td>${team[5]}</td>
+                        <td>${team[6]}</td>
+
+                        <td>
+                            <strong>${team[7]}</strong>
+                        </td>
+
                     </tr>
-                </thead>
+                `)
+                .join("")}
 
-                <tbody>
-
-                    ${standings.map(team => `
-                        <tr>
-
-                            <td>
-                                ${team.position}
-                            </td>
-
-                            <td class="table-team">
-
-                                <span class="team-code small">
-                                    ${safe(team.code)}
-                                </span>
-
-                                <strong>
-                                    ${safe(team.team)}
-                                </strong>
-
-                            </td>
-
-                            <td>${team.played}</td>
-                            <td>${team.wins}</td>
-                            <td>${team.draws}</td>
-                            <td>${team.losses}</td>
-
-                            <td>
-                                <strong>
-                                    ${team.points}
-                                </strong>
-                            </td>
-
-                        </tr>
-                    `).join("")}
-
-                </tbody>
-
-            </table>
-
-        </div>
+        </tbody>
     `;
 }
 
-
 /* =========================================================
-   SCORERS
+   TOP SCORERS
    ========================================================= */
 
 function renderScorers() {
-
     const container = el("scorersContainer");
 
     if (!container) return;
 
-    container.innerHTML = scorers.map((player, index) => `
-        <div class="scorer-row">
+    container.innerHTML = demoScorers
+        .map((scorer, index) => `
+            <div class="scorer-row">
 
-            <span class="scorer-position">
-                ${index + 1}
-            </span>
-
-            <span class="scorer-avatar">
-                ${safe(player.emoji)}
-            </span>
-
-            <div class="scorer-info">
-
-                <strong>
-                    ${safe(player.name)}
-                </strong>
-
-                <span>
-                    ${safe(player.club)}
+                <span class="scorer-rank">
+                    ${index + 1}
                 </span>
 
+                <div class="scorer-info">
+                    <strong>${safe(scorer[0])}</strong>
+                    <small>${safe(scorer[1])}</small>
+                </div>
+
+                <strong class="scorer-goals">
+                    ${scorer[2]}
+                </strong>
+
             </div>
-
-            <strong class="scorer-goals">
-                ${player.goals}
-            </strong>
-
-        </div>
-    `).join("");
+        `)
+        .join("");
 }
-
 
 /* =========================================================
    NEWS
    ========================================================= */
 
 function renderNews() {
-
     const container = el("newsContainer");
 
     if (!container) return;
 
-    container.innerHTML = news.map(item => `
-        <article class="news-card">
+    container.innerHTML = demoNews
+        .map(article => `
+            <article class="news-card">
 
-            <div class="news-image">
-                ${safe(item.emoji)}
-            </div>
-
-            <div class="news-content">
-
-                <div class="news-meta">
-
-                    <span>
-                        ${safe(item.category)}
-                    </span>
-
-                    <span>
-                        ${safe(item.date)}
-                    </span>
-
+                <div class="news-category">
+                    ${safe(article.category)}
                 </div>
 
-                <h3>
-                    ${safe(item.title)}
-                </h3>
+                <h3>${safe(article.title)}</h3>
 
-                <p>
-                    ${safe(item.description)}
-                </p>
+                <p>${safe(article.text)}</p>
 
-            </div>
+                <span class="news-link">
+                    Read more →
+                </span>
 
-        </article>
-    `).join("");
+            </article>
+        `)
+        .join("");
 }
-
-
-/* =========================================================
-   FEATURED MATCH
-   ========================================================= */
-
-function renderFeaturedMatch() {
-
-    const container = el("featuredMatches");
-
-    if (!container) return;
-
-    const match = matches[0];
-
-    container.innerHTML = `
-        <div class="featured-match">
-
-            <div class="featured-label">
-                FEATURED MATCH · DEMO
-            </div>
-
-            <div class="featured-league">
-                ${safe(match.league)}
-            </div>
-
-            <div class="featured-teams">
-
-                <div>
-                    <span class="featured-code">
-                        ${safe(match.homeCode)}
-                    </span>
-
-                    <strong>
-                        ${safe(match.home)}
-                    </strong>
-                </div>
-
-                <div class="featured-score">
-                    ${match.homeScore}
-                    -
-                    ${match.awayScore}
-                </div>
-
-                <div>
-                    <span class="featured-code">
-                        ${safe(match.awayCode)}
-                    </span>
-
-                    <strong>
-                        ${safe(match.away)}
-                    </strong>
-                </div>
-
-            </div>
-
-            <div class="featured-status">
-                ${safe(match.time)}
-            </div>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   MATCH FILTER BUTTONS
-   ========================================================= */
-
-function setupFilters() {
-
-    const buttons =
-        document.querySelectorAll(
-            "[data-match-filter]"
-        );
-
-    buttons.forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            buttons.forEach(btn =>
-                btn.classList.remove("active")
-            );
-
-            button.classList.add("active");
-
-            renderMatches(
-                button.dataset.matchFilter
-            );
-
-        });
-
-    });
-}
-
 
 /* =========================================================
    SEARCH
    ========================================================= */
 
 function setupSearch() {
-
     const input = el("searchInput");
     const results = el("searchResults");
 
     if (!input || !results) return;
 
-    input.addEventListener("input", () => {
+    const searchableData = [
+        ...demoPlayers.map(player => ({
+            type: "Player",
+            name: player.name,
+            detail: `${player.team} • ${player.position}`
+        })),
 
-        const query =
-            input.value.trim().toLowerCase();
+        ...demoTeams.map(team => ({
+            type: "Team",
+            name: team.name,
+            detail: `${team.league} • ${team.country}`
+        })),
+
+        "Premier League",
+        "La Liga",
+        "Bundesliga",
+        "Serie A",
+        "Ligue 1",
+        "UEFA Champions League",
+        "UEFA Europa League"
+    ];
+
+    input.addEventListener("input", () => {
+        const query = input.value.trim().toLowerCase();
 
         if (!query) {
-
             results.innerHTML = `
-                <div class="search-placeholder">
-                    <p>
-                        Search for a player, team or league.
-                    </p>
-                </div>
+                <p class="search-placeholder">
+                    Search for a player, team or league.
+                </p>
             `;
 
             return;
         }
 
-        const foundPlayers =
-            players.filter(player =>
-                player.name.toLowerCase().includes(query) ||
-                player.club.toLowerCase().includes(query)
+        const matches = searchableData.filter(item => {
+            if (typeof item === "string") {
+                return item.toLowerCase().includes(query);
+            }
+
+            return (
+                item.name.toLowerCase().includes(query) ||
+                item.detail.toLowerCase().includes(query)
             );
+        });
 
-        const foundTeams =
-            teams.filter(team =>
-                team.name.toLowerCase().includes(query) ||
-                team.league.toLowerCase().includes(query)
-            );
+        if (!matches.length) {
+            results.innerHTML = `
+                <p class="search-placeholder">
+                    No results found for
+                    "<strong>${safe(input.value)}</strong>".
+                </p>
+            `;
 
-        const foundLeagues =
-            leagues.filter(league =>
-                league.toLowerCase().includes(query)
-            );
+            return;
+        }
 
-        let html = "";
+        results.innerHTML = matches
+            .slice(0, 12)
+            .map(item => {
 
-        if (foundPlayers.length) {
-
-            html += `
-                <div class="search-group">
-
-                    <h3>Players</h3>
-
-                    ${foundPlayers.map(player => `
-                        <div class="search-result-item">
-
-                            <span class="search-icon">
-                                ${safe(player.emoji)}
-                            </span>
-
-                            <div>
-                                <strong>
-                                    ${safe(player.name)}
-                                </strong>
-
-                                <span>
-                                    Player · ${safe(player.club)}
-                                </span>
-                            </div>
-
+                if (typeof item === "string") {
+                    return `
+                        <div class="search-result">
+                            <strong>${safe(item)}</strong>
+                            <small>League</small>
                         </div>
-                    `).join("")}
+                    `;
+                }
 
-                </div>
-            `;
-        }
-
-        if (foundTeams.length) {
-
-            html += `
-                <div class="search-group">
-
-                    <h3>Teams</h3>
-
-                    ${foundTeams.map(team => `
-                        <div class="search-result-item">
-
-                            <span class="search-icon">
-                                ⚽
-                            </span>
-
-                            <div>
-                                <strong>
-                                    ${safe(team.name)}
-                                </strong>
-
-                                <span>
-                                    Team · ${safe(team.league)}
-                                </span>
-                            </div>
-
-                        </div>
-                    `).join("")}
-
-                </div>
-            `;
-        }
-
-        if (foundLeagues.length) {
-
-            html += `
-                <div class="search-group">
-
-                    <h3>Leagues</h3>
-
-                    ${foundLeagues.map(league => `
-                        <div class="search-result-item">
-
-                            <span class="search-icon">
-                                🏆
-                            </span>
-
-                            <div>
-                                <strong>
-                                    ${safe(league)}
-                                </strong>
-
-                                <span>
-                                    Football competition
-                                </span>
-                            </div>
-
-                        </div>
-                    `).join("")}
-
-                </div>
-            `;
-        }
-
-        if (!html) {
-
-            html = `
-                <div class="search-placeholder">
-                    <p>
-                        No results found for
-                        "<strong>${safe(input.value)}</strong>".
-                    </p>
-                </div>
-            `;
-        }
-
-        results.innerHTML = html;
-
+                return `
+                    <div class="search-result">
+                        <strong>${safe(item.name)}</strong>
+                        <small>
+                            ${safe(item.type)} •
+                            ${safe(item.detail)}
+                        </small>
+                    </div>
+                `;
+            })
+            .join("");
     });
 }
 
+/* =========================================================
+   MATCH FILTER BUTTONS
+   ========================================================= */
+
+function setupFilters() {
+    const buttons = document.querySelectorAll(
+        "[data-match-filter]"
+    );
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            buttons.forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            const filter =
+                button.dataset.matchFilter || "all";
+
+            renderMatches(filter);
+        });
+
+    });
+}
 
 /* =========================================================
    MOBILE MENU
    ========================================================= */
 
 function setupMobileMenu() {
-
     const button = el("mobileMenuBtn");
     const nav = document.querySelector(".main-nav");
 
     if (!button || !nav) return;
 
     button.addEventListener("click", () => {
-
-        const opened =
-            nav.classList.toggle("open");
-
-        button.setAttribute(
-            "aria-expanded",
-            opened ? "true" : "false"
-        );
-
+        nav.classList.toggle("open");
     });
 
     nav.querySelectorAll("a").forEach(link => {
-
         link.addEventListener("click", () => {
-
             nav.classList.remove("open");
-
-            button.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
         });
-
     });
 }
-
 
 /* =========================================================
    THEME
    ========================================================= */
 
 function setupTheme() {
-
     const button = el("themeToggle");
 
     if (!button) return;
 
-    const storageKey =
-        "ultimate-football-theme";
+    const savedTheme =
+        localStorage.getItem("ultimateFootballTheme");
 
-    const saved =
-        localStorage.getItem(storageKey);
+    const preferredTheme =
+        savedTheme ||
+        (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark"
+        );
 
-    const systemDark =
-        window.matchMedia &&
-        window.matchMedia(
-            "(prefers-color-scheme: dark)"
-        ).matches;
-
-    let theme =
-        saved ||
-        (systemDark ? "dark" : "light");
-
-    applyTheme(theme);
+    applyTheme(preferredTheme);
 
     button.addEventListener("click", () => {
 
-        theme =
-            theme === "dark"
+        const current =
+            document.documentElement.dataset.theme ||
+            "dark";
+
+        const next =
+            current === "dark"
                 ? "light"
                 : "dark";
 
-        applyTheme(theme);
+        applyTheme(next);
 
         localStorage.setItem(
-            storageKey,
-            theme
+            "ultimateFootballTheme",
+            next
         );
-
     });
-
 }
 
-
 function applyTheme(theme) {
-
-    document.documentElement.dataset.theme =
-        theme;
+    document.documentElement.dataset.theme = theme;
 
     const button = el("themeToggle");
 
-    if (!button) return;
-
-    if (theme === "dark") {
-
-        button.textContent = "☀️";
-
-        button.title =
-            "Switch to light mode";
+    if (button) {
+        button.textContent =
+            theme === "dark"
+                ? "☀️"
+                : "🌙";
 
         button.setAttribute(
             "aria-label",
-            "Switch to light mode"
+            theme === "dark"
+                ? "Switch to light mode"
+                : "Switch to dark mode"
         );
-
-    } else {
-
-        button.textContent = "🌙";
-
-        button.title =
-            "Switch to dark mode";
-
-        button.setAttribute(
-            "aria-label",
-            "Switch to dark mode"
-        );
-
     }
 }
 
-
 /* =========================================================
-   YEAR
+   CURRENT YEAR
    ========================================================= */
 
 function setupYear() {
-
     const year = el("currentYear");
 
     if (year) {
@@ -1223,13 +1043,11 @@ function setupYear() {
     }
 }
 
-
 /* =========================================================
-   SMOOTH SCROLL
+   SMOOTH SCROLLING
    ========================================================= */
 
 function setupSmoothScroll() {
-
     document.querySelectorAll(
         'a[href^="#"]'
     ).forEach(link => {
@@ -1258,78 +1076,35 @@ function setupSmoothScroll() {
         });
 
     });
-
 }
 
-
 /* =========================================================
-   DATA STATUS
+   INITIALIZATION
    ========================================================= */
 
-function setupDataStatus() {
-
-    const status =
-        el("dataStatus");
-
-    if (status) {
-        status.textContent =
-            DEMO_MODE
-                ? "Demo Mode"
-                : "Live Data";
-    }
-}
-
-
-/* =========================================================
-   START EVERYTHING
-   ========================================================= */
-
-function init() {
-
-    renderMatches();
-
-    renderPlayers();
-
-    renderTeams();
-
-    renderStandings();
-
-    renderScorers();
-
-    renderNews();
-
-    renderFeaturedMatch();
+async function init() {
 
     setupFilters();
-
     setupSearch();
-
     setupMobileMenu();
-
     setupTheme();
-
     setupYear();
-
     setupSmoothScroll();
 
-    setupDataStatus();
+    renderPlayers();
+    renderTeams();
+    renderStandings();
+    renderScorers();
+    renderNews();
 
+    await loadFootballData();
 }
-
 
 /* =========================================================
-   RUN
+   START
    ========================================================= */
 
-if (document.readyState === "loading") {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        init
-    );
-
-} else {
-
-    init();
-
-}
+document.addEventListener(
+    "DOMContentLoaded",
+    init
+);
