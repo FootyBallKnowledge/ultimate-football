@@ -1,20 +1,16 @@
-/* =========================================================
-   ULTIMATE FOOTBALL
-   Demo Football Portal
-   No API key required
-   ========================================================= */
-
 "use strict";
 
 /* =========================================================
-   DEMO MODE
+   ULTIMATE FOOTBALL
+   Demo Data Version
+   No API key required
    ========================================================= */
 
 const DEMO_MODE = true;
 
 
 /* =========================================================
-   DEMO MATCH DATA
+   DEMO MATCHES
    ========================================================= */
 
 const matches = [
@@ -118,7 +114,7 @@ const matches = [
 
 
 /* =========================================================
-   DEMO PLAYER DATA
+   PLAYERS
    ========================================================= */
 
 const players = [
@@ -175,30 +171,12 @@ const players = [
         assists: 7,
         appearances: 30,
         emoji: "🏹"
-    },
-    {
-        name: "Lamine Yamal",
-        club: "Barcelona",
-        position: "Forward",
-        goals: 14,
-        assists: 15,
-        appearances: 31,
-        emoji: "🌟"
-    },
-    {
-        name: "Bukayo Saka",
-        club: "Arsenal",
-        position: "Forward",
-        goals: 18,
-        assists: 11,
-        appearances: 30,
-        emoji: "🔴"
     }
 ];
 
 
 /* =========================================================
-   DEMO TEAM DATA
+   TEAMS
    ========================================================= */
 
 const teams = [
@@ -242,7 +220,7 @@ const teams = [
         name: "Barcelona",
         league: "La Liga",
         code: "BAR",
-        stadium: "Spotify Camp Nou",
+        stadium: "Camp Nou",
         manager: "Hansi Flick",
         squad: ["Lamine Yamal", "Pedri", "Robert Lewandowski"],
         form: ["w", "w", "w", "w", "d"]
@@ -260,7 +238,7 @@ const teams = [
 
 
 /* =========================================================
-   DEMO STANDINGS
+   STANDINGS
    ========================================================= */
 
 const standings = [
@@ -366,7 +344,7 @@ const scorers = [
 
 
 /* =========================================================
-   DEMO NEWS
+   NEWS
    ========================================================= */
 
 const news = [
@@ -391,7 +369,7 @@ const news = [
         date: "Demo",
         title: "The Rise of the Modern Attacking Player",
         description:
-            "Speed, creativity and versatility are becoming increasingly important qualities for attacking players.",
+            "Speed, creativity and versatility are becoming increasingly important qualities.",
         emoji: "⚡"
     },
     {
@@ -399,14 +377,14 @@ const news = [
         date: "Demo",
         title: "Europe's Major Football Leagues",
         description:
-            "Follow the Premier League, La Liga, Bundesliga, Serie A and Ligue 1 in one place.",
+            "Follow the Premier League, La Liga, Bundesliga, Serie A and Ligue 1.",
         emoji: "🌍"
     }
 ];
 
 
 /* =========================================================
-   LEAGUES FOR SEARCH
+   LEAGUES
    ========================================================= */
 
 const leagues = [
@@ -421,29 +399,10 @@ const leagues = [
 
 
 /* =========================================================
-   DOM ELEMENTS
+   SAFE HTML
    ========================================================= */
 
-const matchesContainer = document.getElementById("matchesContainer");
-const playersContainer = document.getElementById("playersContainer");
-const teamsContainer = document.getElementById("teamsContainer");
-const standingsTable = document.getElementById("standingsTable");
-const scorersContainer = document.getElementById("scorersContainer");
-const newsContainer = document.getElementById("newsContainer");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-
-const themeToggle = document.getElementById("themeToggle");
-const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-
-const currentYear = document.getElementById("currentYear");
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(value) {
+function safe(value) {
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -454,92 +413,108 @@ function escapeHtml(value) {
 
 
 /* =========================================================
+   ELEMENT HELPER
+   ========================================================= */
+
+function el(id) {
+    return document.getElementById(id);
+}
+
+
+/* =========================================================
    MATCHES
    ========================================================= */
 
 function renderMatches(filter = "all") {
 
-    if (!matchesContainer) return;
+    const container = el("matchesContainer");
 
-    let filteredMatches = matches;
+    if (!container) return;
+
+    let data = matches;
 
     if (filter !== "all") {
-        filteredMatches = matches.filter(match => match.status === filter);
+        data = matches.filter(
+            match => match.status === filter
+        );
     }
 
-    if (filteredMatches.length === 0) {
-        matchesContainer.innerHTML = `
+    if (!data.length) {
+        container.innerHTML = `
             <div class="empty-state">
-                <p>No matches found for this category.</p>
+                No matches available.
             </div>
         `;
         return;
     }
 
-    matchesContainer.innerHTML = filteredMatches.map(match => {
+    container.innerHTML = data.map(match => {
 
-        let statusText = "";
-
-        if (match.status === "live") {
-            statusText = "LIVE";
-        } else if (match.status === "upcoming") {
-            statusText = match.time;
-        } else {
-            statusText = "FT";
-        }
-
-        const scoreDisplay =
+        const score =
             match.status === "upcoming"
-                ? `<span class="match-time">${escapeHtml(match.time)}</span>`
-                : `
-                    <span class="score">
-                        ${escapeHtml(match.homeScore)} - ${escapeHtml(match.awayScore)}
-                    </span>
-                `;
+                ? match.time
+                : `${match.homeScore} - ${match.awayScore}`;
+
+        const statusText =
+            match.status === "live"
+                ? "LIVE"
+                : match.status === "result"
+                    ? "FT"
+                    : "UPCOMING";
 
         return `
             <article class="match-card">
 
                 <div class="match-card-top">
+
                     <span class="match-league">
-                        ${escapeHtml(match.league)}
+                        ${safe(match.league)}
                     </span>
 
-                    <span class="match-status ${escapeHtml(match.status)}">
-                        ${escapeHtml(statusText)}
+                    <span class="match-status ${safe(match.status)}">
+                        ${statusText}
                     </span>
+
                 </div>
 
                 <div class="match-teams">
 
                     <div class="team-side">
+
                         <div class="team-code">
-                            ${escapeHtml(match.homeCode)}
+                            ${safe(match.homeCode)}
                         </div>
 
                         <strong>
-                            ${escapeHtml(match.home)}
+                            ${safe(match.home)}
                         </strong>
+
                     </div>
 
                     <div class="match-score">
-                        ${scoreDisplay}
+
+                        <strong>
+                            ${safe(score)}
+                        </strong>
+
                     </div>
 
                     <div class="team-side">
+
                         <div class="team-code">
-                            ${escapeHtml(match.awayCode)}
+                            ${safe(match.awayCode)}
                         </div>
 
                         <strong>
-                            ${escapeHtml(match.away)}
+                            ${safe(match.away)}
                         </strong>
+
                     </div>
 
                 </div>
 
                 <div class="match-date">
-                    ${escapeHtml(match.date)}
+                    ${safe(match.date)}
                 </div>
 
             </article>
@@ -555,54 +530,54 @@ function renderMatches(filter = "all") {
 
 function renderPlayers() {
 
-    if (!playersContainer) return;
+    const container = el("playersContainer");
 
-    playersContainer.innerHTML = players.map(player => {
+    if (!container) return;
 
-        return `
-            <article class="player-card">
+    container.innerHTML = players.map(player => `
+        <article class="player-card">
 
-                <div class="player-image">
-                    ${escapeHtml(player.emoji)}
-                </div>
+            <div class="player-image">
+                ${safe(player.emoji)}
+            </div>
 
-                <div class="player-info">
+            <div class="player-info">
 
-                    <h3>${escapeHtml(player.name)}</h3>
+                <h3>
+                    ${safe(player.name)}
+                </h3>
 
-                    <p class="player-club">
-                        ${escapeHtml(player.club)}
-                    </p>
+                <p class="player-club">
+                    ${safe(player.club)}
+                </p>
 
-                    <span class="player-position">
-                        ${escapeHtml(player.position)}
-                    </span>
+                <span class="player-position">
+                    ${safe(player.position)}
+                </span>
 
-                    <div class="player-stats">
+                <div class="player-stats">
 
-                        <div>
-                            <strong>${escapeHtml(player.goals)}</strong>
-                            <span>Goals</span>
-                        </div>
+                    <div>
+                        <strong>${player.goals}</strong>
+                        <span>Goals</span>
+                    </div>
 
-                        <div>
-                            <strong>${escapeHtml(player.assists)}</strong>
-                            <span>Assists</span>
-                        </div>
+                    <div>
+                        <strong>${player.assists}</strong>
+                        <span>Assists</span>
+                    </div>
 
-                        <div>
-                            <strong>${escapeHtml(player.appearances)}</strong>
-                            <span>Apps</span>
-                        </div>
-
+                    <div>
+                        <strong>${player.appearances}</strong>
+                        <span>Apps</span>
                     </div>
 
                 </div>
 
-            </article>
-        `;
+            </div>
 
-    }).join("");
+        </article>
+    `).join("");
 }
 
 
@@ -612,21 +587,24 @@ function renderPlayers() {
 
 function renderTeams() {
 
-    if (!teamsContainer) return;
+    const container = el("teamsContainer");
 
-    teamsContainer.innerHTML = teams.map(team => {
+    if (!container) return;
 
-        const formHtml = team.form.map(result => {
+    container.innerHTML = teams.map(team => {
 
-            let label = "";
+        const form = team.form.map(result => {
 
-            if (result === "w") label = "W";
-            if (result === "d") label = "D";
-            if (result === "l") label = "L";
+            const letter =
+                result === "w"
+                    ? "W"
+                    : result === "d"
+                        ? "D"
+                        : "L";
 
             return `
-                <span class="form-badge ${escapeHtml(result)}">
-                    ${label}
+                <span class="form-badge ${result}">
+                    ${letter}
                 </span>
             `;
 
@@ -638,12 +616,17 @@ function renderTeams() {
                 <div class="team-card-header">
 
                     <div class="team-code large">
-                        ${escapeHtml(team.code)}
+                        ${safe(team.code)}
                     </div>
 
                     <div>
-                        <h3>${escapeHtml(team.name)}</h3>
-                        <p>${escapeHtml(team.league)}</p>
+                        <h3>
+                            ${safe(team.name)}
+                        </h3>
+
+                        <p>
+                            ${safe(team.league)}
+                        </p>
                     </div>
 
                 </div>
@@ -652,12 +635,12 @@ function renderTeams() {
 
                     <p>
                         <strong>Stadium:</strong>
-                        ${escapeHtml(team.stadium)}
+                        ${safe(team.stadium)}
                     </p>
 
                     <p>
                         <strong>Manager:</strong>
-                        ${escapeHtml(team.manager)}
+                        ${safe(team.manager)}
                     </p>
 
                 </div>
@@ -668,7 +651,7 @@ function renderTeams() {
 
                     <ul>
                         ${team.squad.map(player => `
-                            <li>${escapeHtml(player)}</li>
+                            <li>${safe(player)}</li>
                         `).join("")}
                     </ul>
 
@@ -679,7 +662,7 @@ function renderTeams() {
                     <h4>Recent Form</h4>
 
                     <div class="form-list">
-                        ${formHtml}
+                        ${form}
                     </div>
 
                 </div>
@@ -697,9 +680,11 @@ function renderTeams() {
 
 function renderStandings() {
 
-    if (!standingsTable) return;
+    const container = el("standingsTable");
 
-    standingsTable.innerHTML = `
+    if (!container) return;
+
+    container.innerHTML = `
         <div class="table-wrapper">
 
             <table>
@@ -722,28 +707,30 @@ function renderStandings() {
                         <tr>
 
                             <td>
-                                ${escapeHtml(team.position)}
+                                ${team.position}
                             </td>
 
                             <td class="table-team">
 
                                 <span class="team-code small">
-                                    ${escapeHtml(team.code)}
+                                    ${safe(team.code)}
                                 </span>
 
                                 <strong>
-                                    ${escapeHtml(team.team)}
+                                    ${safe(team.team)}
                                 </strong>
 
                             </td>
 
-                            <td>${escapeHtml(team.played)}</td>
-                            <td>${escapeHtml(team.wins)}</td>
-                            <td>${escapeHtml(team.draws)}</td>
-                            <td>${escapeHtml(team.losses)}</td>
+                            <td>${team.played}</td>
+                            <td>${team.wins}</td>
+                            <td>${team.draws}</td>
+                            <td>${team.losses}</td>
 
                             <td>
-                                <strong>${escapeHtml(team.points)}</strong>
+                                <strong>
+                                    ${team.points}
+                                </strong>
                             </td>
 
                         </tr>
@@ -759,46 +746,44 @@ function renderStandings() {
 
 
 /* =========================================================
-   TOP SCORERS
+   SCORERS
    ========================================================= */
 
 function renderScorers() {
 
-    if (!scorersContainer) return;
+    const container = el("scorersContainer");
 
-    scorersContainer.innerHTML = scorers.map((player, index) => {
+    if (!container) return;
 
-        return `
-            <div class="scorer-row">
+    container.innerHTML = scorers.map((player, index) => `
+        <div class="scorer-row">
 
-                <span class="scorer-position">
-                    ${index + 1}
-                </span>
+            <span class="scorer-position">
+                ${index + 1}
+            </span>
 
-                <span class="scorer-avatar">
-                    ${escapeHtml(player.emoji)}
-                </span>
+            <span class="scorer-avatar">
+                ${safe(player.emoji)}
+            </span>
 
-                <div class="scorer-info">
+            <div class="scorer-info">
 
-                    <strong>
-                        ${escapeHtml(player.name)}
-                    </strong>
-
-                    <span>
-                        ${escapeHtml(player.club)}
-                    </span>
-
-                </div>
-
-                <strong class="scorer-goals">
-                    ${escapeHtml(player.goals)}
+                <strong>
+                    ${safe(player.name)}
                 </strong>
 
-            </div>
-        `;
+                <span>
+                    ${safe(player.club)}
+                </span>
 
-    }).join("");
+            </div>
+
+            <strong class="scorer-goals">
+                ${player.goals}
+            </strong>
+
+        </div>
+    `).join("");
 }
 
 
@@ -808,38 +793,136 @@ function renderScorers() {
 
 function renderNews() {
 
-    if (!newsContainer) return;
+    const container = el("newsContainer");
 
-    newsContainer.innerHTML = news.map(item => {
+    if (!container) return;
 
-        return `
-            <article class="news-card">
+    container.innerHTML = news.map(item => `
+        <article class="news-card">
 
-                <div class="news-image">
-                    ${escapeHtml(item.emoji)}
-                </div>
+            <div class="news-image">
+                ${safe(item.emoji)}
+            </div>
 
-                <div class="news-content">
+            <div class="news-content">
 
-                    <div class="news-meta">
-                        <span>${escapeHtml(item.category)}</span>
-                        <span>${escapeHtml(item.date)}</span>
-                    </div>
+                <div class="news-meta">
 
-                    <h3>
-                        ${escapeHtml(item.title)}
-                    </h3>
+                    <span>
+                        ${safe(item.category)}
+                    </span>
 
-                    <p>
-                        ${escapeHtml(item.description)}
-                    </p>
+                    <span>
+                        ${safe(item.date)}
+                    </span>
 
                 </div>
 
-            </article>
-        `;
+                <h3>
+                    ${safe(item.title)}
+                </h3>
 
-    }).join("");
+                <p>
+                    ${safe(item.description)}
+                </p>
+
+            </div>
+
+        </article>
+    `).join("");
+}
+
+
+/* =========================================================
+   FEATURED MATCH
+   ========================================================= */
+
+function renderFeaturedMatch() {
+
+    const container = el("featuredMatches");
+
+    if (!container) return;
+
+    const match = matches[0];
+
+    container.innerHTML = `
+        <div class="featured-match">
+
+            <div class="featured-label">
+                FEATURED MATCH · DEMO
+            </div>
+
+            <div class="featured-league">
+                ${safe(match.league)}
+            </div>
+
+            <div class="featured-teams">
+
+                <div>
+                    <span class="featured-code">
+                        ${safe(match.homeCode)}
+                    </span>
+
+                    <strong>
+                        ${safe(match.home)}
+                    </strong>
+                </div>
+
+                <div class="featured-score">
+                    ${match.homeScore}
+                    -
+                    ${match.awayScore}
+                </div>
+
+                <div>
+                    <span class="featured-code">
+                        ${safe(match.awayCode)}
+                    </span>
+
+                    <strong>
+                        ${safe(match.away)}
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="featured-status">
+                ${safe(match.time)}
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   MATCH FILTER BUTTONS
+   ========================================================= */
+
+function setupFilters() {
+
+    const buttons =
+        document.querySelectorAll(
+            "[data-match-filter]"
+        );
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            buttons.forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            renderMatches(
+                button.dataset.matchFilter
+            );
+
+        });
+
+    });
 }
 
 
@@ -847,83 +930,71 @@ function renderNews() {
    SEARCH
    ========================================================= */
 
-function performSearch(query) {
+function setupSearch() {
 
-    if (!searchResults) return;
+    const input = el("searchInput");
+    const results = el("searchResults");
 
-    const term = query.trim().toLowerCase();
+    if (!input || !results) return;
 
-    if (!term) {
-        searchResults.innerHTML = `
-            <div class="search-placeholder">
-                <p>Search for a player, team or league.</p>
-            </div>
-        `;
-        return;
-    }
+    input.addEventListener("input", () => {
 
-    const playerResults = players.filter(player =>
-        player.name.toLowerCase().includes(term) ||
-        player.club.toLowerCase().includes(term) ||
-        player.position.toLowerCase().includes(term)
-    );
+        const query =
+            input.value.trim().toLowerCase();
 
-    const teamResults = teams.filter(team =>
-        team.name.toLowerCase().includes(term) ||
-        team.league.toLowerCase().includes(term) ||
-        team.code.toLowerCase().includes(term)
-    );
+        if (!query) {
 
-    const leagueResults = leagues.filter(league =>
-        league.toLowerCase().includes(term)
-    );
+            results.innerHTML = `
+                <div class="search-placeholder">
+                    <p>
+                        Search for a player, team or league.
+                    </p>
+                </div>
+            `;
 
-    const totalResults =
-        playerResults.length +
-        teamResults.length +
-        leagueResults.length;
+            return;
+        }
 
-    if (totalResults === 0) {
+        const foundPlayers =
+            players.filter(player =>
+                player.name.toLowerCase().includes(query) ||
+                player.club.toLowerCase().includes(query)
+            );
 
-        searchResults.innerHTML = `
-            <div class="search-placeholder">
-                <p>
-                    No results found for
-                    "<strong>${escapeHtml(query)}</strong>".
-                </p>
-            </div>
-        `;
+        const foundTeams =
+            teams.filter(team =>
+                team.name.toLowerCase().includes(query) ||
+                team.league.toLowerCase().includes(query)
+            );
 
-        return;
-    }
+        const foundLeagues =
+            leagues.filter(league =>
+                league.toLowerCase().includes(query)
+            );
 
-    let html = "";
+        let html = "";
 
-    /* Players */
+        if (foundPlayers.length) {
 
-    if (playerResults.length > 0) {
+            html += `
+                <div class="search-group">
 
-        html += `
-            <div class="search-group">
+                    <h3>Players</h3>
 
-                <h3>Players</h3>
-
-                <div class="search-items">
-
-                    ${playerResults.map(player => `
+                    ${foundPlayers.map(player => `
                         <div class="search-result-item">
 
                             <span class="search-icon">
-                                ${escapeHtml(player.emoji)}
+                                ${safe(player.emoji)}
                             </span>
 
                             <div>
                                 <strong>
-                                    ${escapeHtml(player.name)}
+                                    ${safe(player.name)}
                                 </strong>
 
                                 <span>
-                                    Player · ${escapeHtml(player.club)}
+                                    Player · ${safe(player.club)}
                                 </span>
                             </div>
 
@@ -931,24 +1002,17 @@ function performSearch(query) {
                     `).join("")}
 
                 </div>
+            `;
+        }
 
-            </div>
-        `;
-    }
+        if (foundTeams.length) {
 
+            html += `
+                <div class="search-group">
 
-    /* Teams */
+                    <h3>Teams</h3>
 
-    if (teamResults.length > 0) {
-
-        html += `
-            <div class="search-group">
-
-                <h3>Teams</h3>
-
-                <div class="search-items">
-
-                    ${teamResults.map(team => `
+                    ${foundTeams.map(team => `
                         <div class="search-result-item">
 
                             <span class="search-icon">
@@ -957,11 +1021,11 @@ function performSearch(query) {
 
                             <div>
                                 <strong>
-                                    ${escapeHtml(team.name)}
+                                    ${safe(team.name)}
                                 </strong>
 
                                 <span>
-                                    Team · ${escapeHtml(team.league)}
+                                    Team · ${safe(team.league)}
                                 </span>
                             </div>
 
@@ -969,24 +1033,17 @@ function performSearch(query) {
                     `).join("")}
 
                 </div>
+            `;
+        }
 
-            </div>
-        `;
-    }
+        if (foundLeagues.length) {
 
+            html += `
+                <div class="search-group">
 
-    /* Leagues */
+                    <h3>Leagues</h3>
 
-    if (leagueResults.length > 0) {
-
-        html += `
-            <div class="search-group">
-
-                <h3>Leagues</h3>
-
-                <div class="search-items">
-
-                    ${leagueResults.map(league => `
+                    ${foundLeagues.map(league => `
                         <div class="search-result-item">
 
                             <span class="search-icon">
@@ -995,7 +1052,7 @@ function performSearch(query) {
 
                             <div>
                                 <strong>
-                                    ${escapeHtml(league)}
+                                    ${safe(league)}
                                 </strong>
 
                                 <span>
@@ -1007,40 +1064,22 @@ function performSearch(query) {
                     `).join("")}
 
                 </div>
+            `;
+        }
 
-            </div>
-        `;
-    }
+        if (!html) {
 
+            html = `
+                <div class="search-placeholder">
+                    <p>
+                        No results found for
+                        "<strong>${safe(input.value)}</strong>".
+                    </p>
+                </div>
+            `;
+        }
 
-    searchResults.innerHTML = html;
-}
-
-
-/* =========================================================
-   MATCH FILTERS
-   ========================================================= */
-
-function setupMatchFilters() {
-
-    const filterButtons =
-        document.querySelectorAll("[data-match-filter]");
-
-    filterButtons.forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            filterButtons.forEach(btn => {
-                btn.classList.remove("active");
-            });
-
-            button.classList.add("active");
-
-            const filter =
-                button.getAttribute("data-match-filter");
-
-            renderMatches(filter);
-        });
+        results.innerHTML = html;
 
     });
 }
@@ -1052,38 +1091,30 @@ function setupMatchFilters() {
 
 function setupMobileMenu() {
 
-    if (!mobileMenuBtn) return;
+    const button = el("mobileMenuBtn");
+    const nav = document.querySelector(".main-nav");
 
-    const nav =
-        document.querySelector(".main-nav");
+    if (!button || !nav) return;
 
-    if (!nav) return;
+    button.addEventListener("click", () => {
 
-    mobileMenuBtn.addEventListener("click", () => {
-
-        const isOpen =
+        const opened =
             nav.classList.toggle("open");
 
-        mobileMenuBtn.setAttribute(
+        button.setAttribute(
             "aria-expanded",
-            String(isOpen)
+            opened ? "true" : "false"
         );
 
     });
 
-
-    /* Close menu after selecting a link */
-
-    const navLinks =
-        nav.querySelectorAll("a");
-
-    navLinks.forEach(link => {
+    nav.querySelectorAll("a").forEach(link => {
 
         link.addEventListener("click", () => {
 
             nav.classList.remove("open");
 
-            mobileMenuBtn.setAttribute(
+            button.setAttribute(
                 "aria-expanded",
                 "false"
             );
@@ -1091,104 +1122,49 @@ function setupMobileMenu() {
         });
 
     });
-
 }
 
 
 /* =========================================================
-   THEME SYSTEM
+   THEME
    ========================================================= */
 
-const THEME_KEY = "ultimate-football-theme";
+function setupTheme() {
 
+    const button = el("themeToggle");
 
-function applyTheme(theme) {
+    if (!button) return;
 
-    document.documentElement.setAttribute(
-        "data-theme",
-        theme
-    );
+    const storageKey =
+        "ultimate-football-theme";
 
-    if (!themeToggle) return;
+    const saved =
+        localStorage.getItem(storageKey);
 
-    if (theme === "dark") {
-
-        themeToggle.textContent = "☀️";
-
-        themeToggle.setAttribute(
-            "aria-label",
-            "Switch to light mode"
-        );
-
-        themeToggle.setAttribute(
-            "title",
-            "Switch to light mode"
-        );
-
-    } else {
-
-        themeToggle.textContent = "🌙";
-
-        themeToggle.setAttribute(
-            "aria-label",
-            "Switch to dark mode"
-        );
-
-        themeToggle.setAttribute(
-            "title",
-            "Switch to dark mode"
-        );
-    }
-}
-
-
-function getInitialTheme() {
-
-    const savedTheme =
-        localStorage.getItem(THEME_KEY);
-
-    if (savedTheme === "dark" ||
-        savedTheme === "light") {
-
-        return savedTheme;
-    }
-
-    const prefersDark =
+    const systemDark =
         window.matchMedia &&
         window.matchMedia(
             "(prefers-color-scheme: dark)"
         ).matches;
 
-    return prefersDark ? "dark" : "light";
-}
+    let theme =
+        saved ||
+        (systemDark ? "dark" : "light");
 
+    applyTheme(theme);
 
-function setupTheme() {
+    button.addEventListener("click", () => {
 
-    const initialTheme =
-        getInitialTheme();
-
-    applyTheme(initialTheme);
-
-    if (!themeToggle) return;
-
-    themeToggle.addEventListener("click", () => {
-
-        const currentTheme =
-            document.documentElement.getAttribute(
-                "data-theme"
-            ) || "light";
-
-        const newTheme =
-            currentTheme === "dark"
+        theme =
+            theme === "dark"
                 ? "light"
                 : "dark";
 
-        applyTheme(newTheme);
+        applyTheme(theme);
 
         localStorage.setItem(
-            THEME_KEY,
-            newTheme
+            storageKey,
+            theme
         );
 
     });
@@ -1196,26 +1172,74 @@ function setupTheme() {
 }
 
 
-/* =========================================================
-   SMOOTH NAVIGATION
-   ========================================================= */
+function applyTheme(theme) {
 
-function setupSmoothNavigation() {
+    document.documentElement.dataset.theme =
+        theme;
 
-    const links =
-        document.querySelectorAll(
-            'a[href^="#"]'
+    const button = el("themeToggle");
+
+    if (!button) return;
+
+    if (theme === "dark") {
+
+        button.textContent = "☀️";
+
+        button.title =
+            "Switch to light mode";
+
+        button.setAttribute(
+            "aria-label",
+            "Switch to light mode"
         );
 
-    links.forEach(link => {
+    } else {
+
+        button.textContent = "🌙";
+
+        button.title =
+            "Switch to dark mode";
+
+        button.setAttribute(
+            "aria-label",
+            "Switch to dark mode"
+        );
+
+    }
+}
+
+
+/* =========================================================
+   YEAR
+   ========================================================= */
+
+function setupYear() {
+
+    const year = el("currentYear");
+
+    if (year) {
+        year.textContent =
+            new Date().getFullYear();
+    }
+}
+
+
+/* =========================================================
+   SMOOTH SCROLL
+   ========================================================= */
+
+function setupSmoothScroll() {
+
+    document.querySelectorAll(
+        'a[href^="#"]'
+    ).forEach(link => {
 
         link.addEventListener("click", event => {
 
             const targetId =
                 link.getAttribute("href");
 
-            if (!targetId ||
-                targetId === "#") {
+            if (!targetId || targetId === "#") {
                 return;
             }
 
@@ -1239,186 +1263,28 @@ function setupSmoothNavigation() {
 
 
 /* =========================================================
-   ACTIVE NAVIGATION / SCROLL SPY
-   ========================================================= */
-
-function setupScrollSpy() {
-
-    const sections =
-        document.querySelectorAll("main section[id]");
-
-    const navLinks =
-        document.querySelectorAll(
-            '.main-nav a[href^="#"]'
-        );
-
-    if (!sections.length ||
-        !navLinks.length) {
-        return;
-    }
-
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(entry => {
-
-                    if (!entry.isIntersecting) {
-                        return;
-                    }
-
-                    const id =
-                        entry.target.getAttribute("id");
-
-                    navLinks.forEach(link => {
-
-                        link.classList.remove("active");
-
-                        if (
-                            link.getAttribute("href") ===
-                            `#${id}`
-                        ) {
-                            link.classList.add("active");
-                        }
-
-                    });
-
-                });
-
-            },
-            {
-                threshold: 0.25
-            }
-        );
-
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-
-}
-
-
-/* =========================================================
-   HERO FEATURED MATCH
-   ========================================================= */
-
-function updateFeaturedMatch() {
-
-    const featuredMatches =
-        document.getElementById(
-            "featuredMatches"
-        );
-
-    if (!featuredMatches) return;
-
-    const featured = matches[0];
-
-    featuredMatches.innerHTML = `
-        <div class="featured-match">
-
-            <div class="featured-label">
-                FEATURED MATCH · DEMO
-            </div>
-
-            <div class="featured-league">
-                ${escapeHtml(featured.league)}
-            </div>
-
-            <div class="featured-teams">
-
-                <div>
-                    <span class="featured-code">
-                        ${escapeHtml(featured.homeCode)}
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(featured.home)}
-                    </strong>
-                </div>
-
-                <div class="featured-score">
-                    ${escapeHtml(featured.homeScore)}
-                    -
-                    ${escapeHtml(featured.awayScore)}
-                </div>
-
-                <div>
-                    <span class="featured-code">
-                        ${escapeHtml(featured.awayCode)}
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(featured.away)}
-                    </strong>
-                </div>
-
-            </div>
-
-            <div class="featured-status">
-                ${escapeHtml(featured.time)}
-            </div>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
    DATA STATUS
    ========================================================= */
 
-function updateDataStatus() {
+function setupDataStatus() {
 
     const status =
-        document.getElementById("dataStatus");
+        el("dataStatus");
 
-    if (!status) return;
-
-    status.textContent =
-        DEMO_MODE
-            ? "Demo Mode"
-            : "Live Data";
+    if (status) {
+        status.textContent =
+            DEMO_MODE
+                ? "Demo Mode"
+                : "Live Data";
+    }
 }
 
 
 /* =========================================================
-   CURRENT YEAR
+   START EVERYTHING
    ========================================================= */
 
-function updateYear() {
-
-    if (!currentYear) return;
-
-    currentYear.textContent =
-        new Date().getFullYear();
-}
-
-
-/* =========================================================
-   SEARCH EVENT
-   ========================================================= */
-
-function setupSearch() {
-
-    if (!searchInput) return;
-
-    searchInput.addEventListener(
-        "input",
-        event => {
-            performSearch(event.target.value);
-        }
-    );
-
-}
-
-
-/* =========================================================
-   INITIALISE WEBSITE
-   ========================================================= */
-
-function initUltimateFootball() {
-
-    setupTheme();
+function init() {
 
     renderMatches();
 
@@ -1432,38 +1298,38 @@ function initUltimateFootball() {
 
     renderNews();
 
-    updateFeaturedMatch();
+    renderFeaturedMatch();
 
-    updateDataStatus();
+    setupFilters();
 
-    updateYear();
-
-    setupMatchFilters();
+    setupSearch();
 
     setupMobileMenu();
 
-    setupSmoothNavigation();
+    setupTheme();
 
-    setupScrollSpy();
+    setupYear();
 
-    setupSearch();
+    setupSmoothScroll();
+
+    setupDataStatus();
 
 }
 
 
 /* =========================================================
-   START WEBSITE
+   RUN
    ========================================================= */
 
 if (document.readyState === "loading") {
 
     document.addEventListener(
         "DOMContentLoaded",
-        initUltimateFootball
+        init
     );
 
 } else {
 
-    initUltimateFootball();
+    init();
 
 }
