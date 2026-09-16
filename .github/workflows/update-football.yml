@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "*/30 * * * *"
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -33,18 +36,13 @@ jobs:
               }
           )
 
-          try:
-              with urllib.request.urlopen(request) as response:
-                  data = json.loads(response.read().decode())
+          with urllib.request.urlopen(request) as response:
+              data = json.loads(response.read().decode())
 
-              with open("football-data.json", "w", encoding="utf-8") as f:
-                  json.dump(data, f, ensure_ascii=False, indent=2)
+          with open("football-data.json", "w", encoding="utf-8") as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
 
-              print("Football data downloaded successfully.")
-
-          except Exception as error:
-              print("API request failed:", error)
-              raise
+          print("Football data downloaded successfully.")
           PY
 
       - name: Commit updated data
@@ -54,6 +52,9 @@ jobs:
 
           git add football-data.json
 
-          git diff --cached --quiet || git commit -m "Update football data"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "No football data changes."
+          else
+            git commit -m "Update football data"
+            git push
+          fi
